@@ -19,7 +19,12 @@ outside = 'outside_int'
 
 
 def create_table(tbl_name):
-	sql = 'create table if not exists ' + tbl_name + '(sDate datetime, srcIP varchar(15), srcPort varchar(10), dstIP varchar(15), dstPort varchar(10), pktSize int, protocol varchar(10), flag varchar(5) );'
+	sql = 'create table if not exists ' + tbl_name + \
+		'(sDate datetime, eth_dst varchar(17), eth_src varchar(17), eth_type varchar(4), \
+		ip_ver smallint, ip_ihl smallint, ip_tos varchar(5), ip_len int, ip_id int, ip_flags varchar(3), \
+		ip_frag smallint, ip_ttl int, ip_proto varchar(5), ip_chksum varchar(6), ip_src varchar(15), ip_dst varchar(15), \
+		tcp_sPort varchar(5), tcp_dPort varchar(5), tcp_seq int, tcp_ack int, tcp_dataofs int, tcp_reserved int, tcp_flags varchar(3), \
+		tcp_window int, tcp_chksum varchar(6), tcp_urgptr int)'
 	c.execute(sql)
 	conn.commit()
 
@@ -30,17 +35,42 @@ def pcap_into_list_of_tuples(file_name):
 
 	for pkt in pkts:
 	    timestamp = datetime.fromtimestamp(pkt.time).strftime('%Y-%m-%d %H:%M:%S')
-	    srcIP,srcPort = pkt.sprintf("%IP.src%"), pkt.sprintf("%TCP.sport%")
-	    dstIP,dstPort = pkt.sprintf("%IP.dst%"), pkt.sprintf("%TCP.dport%")
-	    pktSize, protocol = int( pkt.sprintf("%IP.len%") ), pkt.sprintf("%IP.proto%")
-	    flags = pkt.sprintf("%TCP.flags%S")
-	    tuples = (timestamp, srcIP, srcPort, dstIP, dstPort, pktSize, protocol, flags)
+	   
+	    eth_dst = pkt.sprintf("%Ether.dst%")
+	    eth_src = pkt.sprintf("%Ether.src%")
+	    eth_type = pkt.sprintf("%Ether.type%")
+	    
+	    ip_ver = pkt.sprintf("%IP.version%")
+	    ip_ihl = pkt.sprintf("%IP.ihl%")
+	    ip_tos = pkt.sprintf("%IP.tos%")
+	    ip_len = pkt.sprintf("%IP.len%")
+	    ip_id = pkt.sprintf("%IP.id%")
+	    ip_flags = pkt.sprintf("%IP.flags%")
+	    ip_frag = pkt.sprintf("%IP.frag%")
+	    ip_ttl = pkt.sprintf("%IP.ttl%")
+	    ip_proto = pkt.sprintf("%IP.proto%")
+	    ip_chksum = pkt.sprintf("%IP.chksum%")
+	    ip_src = pkt.sprintf("%IP.src%")
+	    ip_dst = pkt.sprintf("%IP.dst%")
+
+	    tcp_sPort = pkt.sprintf("%TCP.sport%")
+	    tcp_dPort = pkt.sprintf("%TCP.dport%")
+	    tcp_seq = pkt.sprintf("%TCP.seq%")
+	    tcp_ack = pkt.sprintf("%TCP.ack%")
+	    tcp_dataofs = pkt.sprintf("%TCP.dataofs%")
+	    tcp_reserved = pkt.sprintf("%TCP.reserved%")
+	    tcp_flags = pkt.sprintf("%TCP.flags%")
+	    tcp_window =  pkt.sprintf("%TCP.window%")
+	    tcp_chksum = pkt.sprintf("%TCP.chksum%")
+	    tcp_urgptr = pkt.sprintf("%TCP.urgptr%")
+
+	    tuples = (timestamp, eth_dst, eth_src, eth_type, ip_ver, ip_ihl, ip_tos, ip_len, ip_id, ip_flags, ip_frag, ip_ttl, ip_proto, ip_chksum, ip_src, ip_dst, tcp_sPort, tcp_dPort, tcp_seq, tcp_ack, tcp_dataofs, tcp_reserved, tcp_flags, tcp_window, tcp_chksum, tcp_urgptr)
 	    row.append(tuples)
-	
+		print(pkt.id)
 	return row
 
 def insert_table(pLists, tbl_name):
-	    sql = 'insert into ' + tbl_name + ' values (?, ?, ?, ?, ?, ?, ?, ?)'
+	    sql = 'insert into ' + tbl_name + ' values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 	    c.executemany(sql, pLists)
 	    conn.commit()
 
@@ -61,13 +91,18 @@ def drop_table(tbl_name):
 	c.execute(sql)
 
 
-def test():
+def drop_all_table():
 	drop_table(inside)
 	drop_table(outside)
 
-#test()
+def only_pcap():
+	x = pcap_into_list_of_tuples(capin)
+	print(x[105])
 
-main()
+# drop_all_table()
+ only_pcap()
+
+#main()
 
 
 """
