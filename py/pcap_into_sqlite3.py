@@ -66,7 +66,7 @@ def pcap_into_list_of_tuples(file_name):
 
 	    tuples = (timestamp, eth_dst, eth_src, eth_type, ip_ver, ip_ihl, ip_tos, ip_len, ip_id, ip_flags, ip_frag, ip_ttl, ip_proto, ip_chksum, ip_src, ip_dst, tcp_sPort, tcp_dPort, tcp_seq, tcp_ack, tcp_dataofs, tcp_reserved, tcp_flags, tcp_window, tcp_chksum, tcp_urgptr)
 	    row.append(tuples)
-		print(pkt.id)
+		# print(pkt.id)
 	return row
 
 def insert_table(pLists, tbl_name):
@@ -100,9 +100,9 @@ def only_pcap():
 	print(x[105])
 
 # drop_all_table()
- only_pcap()
+# only_pcap()
 
-#main()
+main()
 
 
 """
