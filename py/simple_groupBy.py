@@ -53,6 +53,7 @@ def table_to_query(tbl_name):
 	print()
 	col_groupBy(tbl_name, 'tcp_dport')
 	print()
+	col_groupBy(tbl_name, 'ip_src, tcp_sport, ip_dst, tcp_dport, ip_proto, ip_flags')
 	print()
 
 
