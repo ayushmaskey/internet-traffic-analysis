@@ -2,7 +2,7 @@ import sqlite3
 from scapy.all import rdpcap
 from datetime import datetime
 from pprint import pprint
-
+import socket
 
 db = '../db/firewall.db'
 
@@ -88,6 +88,7 @@ def pcap_into_db(file_name, tbl_name):
 	pcap_into_lists = pcap_into_list_of_tuples(file_name)
 	insert_generic_table(pcap_into_lists, tbl_name)
 
+
 # move all 10. ip into internal and all else into external column
 def sort_col_by_internal_external(src_tbl, dst_tbl):
 	src_rows, dst_rows, dst_tuple = [], [], ()
@@ -96,6 +97,7 @@ def sort_col_by_internal_external(src_tbl, dst_tbl):
 	src_rows = c.execute(sql)
 
 	for src_row in src_rows:
+
 		if(src_row[1][:3] == '10.' or src_row[1][:3] == '192' or src_row[1][:3] == '172' or src_row[1] == '72.253.69.200' ):
 			dst_tuple = (src_row[0], src_row[1], src_row[2], src_row[3], src_row[4], src_row[5], src_row[6], src_row[7], src_row[8])
 		else:
@@ -140,7 +142,7 @@ def main():
 	all_pcap_db()
 	warehousing()
 
-drop_all_table()
+# drop_all_table()
 
 main()
 
